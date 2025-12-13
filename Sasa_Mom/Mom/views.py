@@ -8,7 +8,7 @@ from .forms import (
     MotherPregnancyForm, PregnancyNextVisitForm, VaccinationForm,
     ChildVaccinationForm, ChildForm
 )
-from .models import Mother, ChildVaccination, Pregnancy, Vaccination, Child, MessageLog
+from .models import Mother, ChildVaccination, Pregnancy, Vaccination, Child
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 
