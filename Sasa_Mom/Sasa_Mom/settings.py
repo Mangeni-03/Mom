@@ -118,6 +118,6 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 # Authentication redirects
-LOGIN_URL = '/staff_login/'
-LOGIN_REDIRECT_URL = '/staff_dashboard/'
-LOGOUT_REDIRECT_URL = '/staff_login/'
+LOGIN_URL = 'Mom/staffLogin/'
+LOGIN_REDIRECT_URL = 'Mom/staffDashboard/'
+LOGOUT_REDIRECT_URL = 'Mom/staffLogin/'
