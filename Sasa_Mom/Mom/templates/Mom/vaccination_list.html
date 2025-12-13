@@ -1,0 +1,13 @@
+{% extends "main.html" %}
+{% block content %}
+<h2>All Vaccinations</h2>
+<ul class="list-group">
+  {% for vac in vaccinations %}
+    <li class="list-group-item">
+      {{ vac.name }} — Recommended at {{ vac.recommended_age_days }} days (Dose {{ vac.dose_order }})
+    </li>
+  {% empty %}
+    <li class="list-group-item">No vaccinations added yet.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'main.html' %}
+{% block content %}
+
+<div class="container mt-4">
+  <div class="card p-4 shadow-lg">
+    <h4>Update Next Visit</h4>
+    <hr>
+    
+    <p><strong>Mother:</strong> {{ pregnancy.mother.name }}</p>
+    <p><strong>Current Next Visit:</strong> 
+       {% if pregnancy.next_visit %} {{ pregnancy.next_visit|date:"M d, Y" }} {% else %} Not set {% endif %}
+    </p>
+
+    <form method="POST">
+      {% csrf_token %}
+      <div class="mb-3">
+        {{ form.next_visit.label_tag }}
+        {{ form.next_visit }}
+        {{ form.next_visit.errors }}
+      </div>
+
+      <button type="submit" class="btn btn-primary">Update</button>
+      <a href="{% url 'motherPage' pregnancy.mother.id %}" class="btn btn-secondary">Cancel</a>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

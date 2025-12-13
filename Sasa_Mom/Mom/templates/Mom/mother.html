@@ -1,0 +1,129 @@
+{% extends 'main.html' %}
+{% block content %}
+
+<div class="container mt-4">
+  <div class="card shadow-lg border-0 p-4 rounded-4">
+
+    <h3 class="mb-3 text-primary">Mother Profile & Healthcare Reminders</h3>
+    <p class="text-muted mb-3">Detailed overview of mother, pregnancy, children & reminders.</p>
+    <hr>
+
+    <!-- Mother Info -->
+    <h4 class="text-secondary mt-3">Mother Details</h4>
+    <div class="row mt-3">
+      <div class="col-md-6 mb-3">
+        <small class="text-muted">Name</small>
+        <p class="fw-bold">{{ mother.name }}</p>
+      </div>
+      <div class="col-md-6 mb-3">
+        <small class="text-muted">Phone</small>
+        <p class="fw-bold">{{ mother.phone }}</p>
+      </div>
+      <div class="col-md-6 mb-3">
+        <small class="text-muted">Language</small>
+        <p class="fw-bold">{{ mother.language }}</p>
+      </div>
+      <div class="col-md-6 mb-3">
+        <small class="text-muted">Hospital</small>
+        <p class="fw-bold">{{ mother.hospital }}</p>
+      </div>
+      <div class="col-md-6 mb-3">
+        <small class="text-muted">Consent Given</small>
+        <p class="fw-bold">
+          {% if mother.consent %}
+            <span class="badge bg-success">YES</span>
+          {% else %}
+            <span class="badge bg-danger">NO</span>
+          {% endif %}
+        </p>
+      </div>
+      <div class="col-md-6 mb-3">
+        <small class="text-muted">Registered On</small>
+        <p class="fw-bold">{{ mother.created_at|date:"M d, Y H:i" }}</p>
+      </div>
+    </div>
+
+    <hr>
+
+    <!-- Pregnancy Section -->
+    <h4 class="text-secondary mt-4">Pregnancy Details</h4>
+    {% if mother.pregnancies.all %}
+      {% for p in mother.pregnancies.all %}
+        <div class="alert alert-secondary mt-3 rounded-3 shadow-sm">
+          {% if p.due_date %}
+            <strong>Due Date:</strong> {{ p.due_date|date:"M d, Y" }} <br>
+          {% else %}
+            <strong>Status:</strong> <span class="text-success">Already Given Birth</span><br>
+          {% endif %}
+          <strong>Next Visit:</strong>
+          {% if p.next_visit %}
+            {{ p.next_visit|date:"M d, Y" }}
+          {% else %}
+            <span class="text-muted">Not set</span>
+          {% endif %}
+          <br>
+          <small class="text-muted">Record created: {{ p.created_at|date:"M d, Y H:i" }}</small>
+          <div class="mt-2">
+            <a href="{% url 'update_next_visit' p.id %}" class="btn btn-sm btn-primary">Update Next Visit</a>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p class="text-muted mt-3">No pregnancy information available.</p>
+    {% endif %}
+
+    <hr>
+
+    <!-- Children Section -->
+    <h4 class="text-secondary mt-4">Children</h4>
+    <a href="{% url 'add_child_to_mother' mother.id %}" class="btn btn-success btn-sm mb-3">+ Add Child</a>
+    {% if mother.children.all %}
+      <div class="row">
+        {% for child in mother.children.all %}
+          <div class="col-md-6 mb-3">
+            <div class="card shadow-sm border-0 rounded-3 p-3">
+              <h5 class="fw-bold text-primary">{{ child.name }}</h5>
+              <p class="mb-1">
+                <strong>Gender:</strong> {{ child.gender }}<br>
+                <strong>DOB:</strong> {{ child.dob }}
+              </p>
+              <a href="{% url 'child_detail' child.id %}" class="btn btn-outline-info btn-sm mt-2">View Child</a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="text-muted mt-2">No children added yet.</p>
+    {% endif %}
+
+    <hr>
+
+    <!-- Vaccination Section -->
+    <h4 class="text-secondary mt-4">Upcoming Vaccinations</h4>
+    {% if upcoming_vaccinations %}
+      {% for vac in upcoming_vaccinations %}
+        <div class="alert alert-info mt-3 rounded-3 shadow-sm d-flex justify-content-between align-items-center">
+          <div>
+            <strong>{{ vac.vaccine_name }}</strong><br>
+            <span>Scheduled on: {{ vac.scheduled_date|date:"M d, Y" }}</span>
+          </div>
+          <form action="{% url 'complete_vaccination' vac.id %}" method="POST" class="mb-0">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success btn-sm">✔ Mark as Done</button>
+          </form>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p class="text-muted mt-3">No upcoming vaccinations.</p>
+    {% endif %}
+
+    <!-- Buttons -->
+    <div class="mt-4 d-flex gap-2">
+      <a href="{% url 'register' %}" class="btn btn-primary">Register Another Mother</a>
+      <a href="{% url 'staff_dashboard' %}" class="btn btn-secondary">View All</a>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}
