@@ -3,7 +3,6 @@ from datetime import timedelta
 from django.utils import timezone
 from django.http import HttpResponse
 from django.urls import reverse
-from django_daraja.mpesa.core import MpesaClient
 from .forms import (
     MotherPregnancyForm, PregnancyNextVisitForm, VaccinationForm,
     ChildVaccinationForm, ChildForm
