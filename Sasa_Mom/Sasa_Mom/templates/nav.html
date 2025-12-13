@@ -1,0 +1,55 @@
+{% load static %}
+<nav class="navbar navbar-expand-lg bg-primary py-2">
+  <div class="container">
+
+    <!-- Logo -->
+    <img
+      src="{% static 'images/logo.svg' %}"
+      alt="logo"
+      width="50"
+      height="50"
+      class="me-3"
+    />
+
+    <!-- Mobile Toggle -->
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNavDropdown"
+      aria-controls="navbarNavDropdown"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Menu -->
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav me-auto">
+
+        <li class="nav-item">
+          <a class="nav-link text-light" href="{% url 'staff_dashboard' %}">
+            Dashboard
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link text-light" href="{% url 'child_list' %}">
+            Children
+          </a>
+        </li>
+
+      </ul>
+
+      <!-- Logout Button (POST method to avoid 405 error) -->
+      <form method="POST" action="{% url 'staff_logout' %}" class="d-flex">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-light text-primary px-3">
+          Logout
+        </button>
+      </form>
+
+    </div>
+  </div>
+</nav>
