@@ -1,0 +1,57 @@
+{% extends "main.html" %}
+
+{% block content %}
+<div class="container mt-4 d-flex justify-content-center">
+  <div class="card shadow p-5" style="width: 700px; border-radius: 18px;">
+    
+    <!-- Child Header -->
+    <h2 class="text-center fw-bold text-primary mb-4" style="font-size: 2rem;">
+      {{ child.name }} — Details
+    </h2>
+
+    <!-- Child Info -->
+    <div class="mb-4" style="font-size: 1.1rem;">
+      <p><strong>Gender:</strong> {{ child.gender }}</p>
+      <p><strong>Date of Birth:</strong> {{ child.dob }}</p>
+    </div>
+
+    <!-- Vaccination Schedule Section -->
+    <h3 class="fw-bold mb-3" style="font-size: 1.5rem;">Upcoming Vaccination Schedule</h3>
+
+    <ul class="list-group mb-4" style="font-size: 1.05rem;">
+      {% for v in upcoming_vaccinations %}
+        <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+          <span>
+            <strong>{{ v.vaccination.name }}</strong><br>
+            <small class="text-muted">Scheduled on {{ v.scheduled_date }}</small>
+          </span>
+
+          {% if v.completed %}
+            <span class="badge bg-success p-2" style="font-size: 0.9rem;">Completed</span>
+          {% else %}
+            <span class="badge bg-warning text-dark p-2" style="font-size: 0.9rem;">Pending</span>
+          {% endif %}
+        </li>
+      {% empty %}
+        <li class="list-group-item text-center text-muted py-3">
+          No upcoming vaccinations.
+        </li>
+      {% endfor %}
+    </ul>
+
+    <!-- Buttons -->
+    <div class="d-flex flex-column gap-3">
+      <a href="{% url 'schedule_child_vaccination' child.id %}" 
+         class="btn btn-success py-2 fs-5 fw-semibold">
+        Schedule New Vaccination
+      </a>
+
+      <a href="{% url 'motherPage' child.mother.id %}" 
+         class="btn btn-secondary py-2 fs-6">
+        Back to Mother
+      </a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

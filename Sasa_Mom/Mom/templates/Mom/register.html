@@ -1,0 +1,61 @@
+{% extends 'main.html' %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="container d-flex justify-content-center mt-5">
+  <div class="card shadow p-4" style="width: 420px;">
+    <h3 class="text-center mb-4 fw-bold text-primary">Mom Registration</h3>
+    <form action="" method="POST">
+      {% csrf_token %}
+
+      <!-- Mother Fields -->
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Name</label>
+        {{ form.name|add_class:"form-control" }}
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Phone</label>
+        {{ form.phone|add_class:"form-control" }}
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Language</label>
+        {{ form.language|add_class:"form-control" }}
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Hospital</label>
+        {{ form.hospital|add_class:"form-control" }}
+      </div>
+
+      <!-- Pregnancy Fields -->
+      <div class="row mb-3 align-items-center">
+        <div class="col">
+          <label class="form-label fw-semibold">Due Date</label>
+          {{ form.due_date|add_class:"form-control" }}
+        </div>
+        <div class="col-auto d-flex align-items-center">
+          <div class="form-check mt-4">
+            {{ form.already_given_birth|add_class:"form-check-input" }}
+            <label class="form-check-label">Already Given Birth</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Next Visit</label>
+        {{ form.next_visit|add_class:"form-control" }}
+      </div>
+
+      <!-- Consent -->
+      <div class="form-check mb-4">
+        {{ form.consent|add_class:"form-check-input" }}
+        <label class="form-check-label">Consent Given</label>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" class="btn btn-primary w-100 fw-semibold rounded-3">Submit</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
