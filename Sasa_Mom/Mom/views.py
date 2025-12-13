@@ -27,14 +27,6 @@ def register_mother(request):
         form = MotherPregnancyForm(request.POST)
         if form.is_valid():
             mother = form.save()
-
-            MessageLog.objects.create(
-                mother=mother,
-                phone=mother.phone,
-                text=f"Welcome to {mother.hospital} — we will send reminders to this number.",
-                status='queued'
-            )
-
             return redirect('motherPage', pk=mother.id)
     else:
         form = MotherPregnancyForm()
