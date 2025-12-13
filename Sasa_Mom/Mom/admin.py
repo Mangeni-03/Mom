@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Mother, Pregnancy, Child, Vaccination, ChildVaccination,MessageLog
+from .models import Mother, Pregnancy, Child, Vaccination, ChildVaccination
 
 # Register your models here.
 # Manage models in the admin panel
