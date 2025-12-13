@@ -55,7 +55,7 @@ ROOT_URLCONF = 'Sasa_Mom.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -116,3 +116,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# Authentication redirects
+LOGIN_URL = '/staff_login/'
+LOGIN_REDIRECT_URL = '/staff_dashboard/'
+LOGOUT_REDIRECT_URL = '/staff_login/'
