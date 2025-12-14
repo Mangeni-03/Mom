@@ -3,6 +3,7 @@ from datetime import timedelta
 from django.utils import timezone
 from django.http import HttpResponse
 from django.urls import reverse
+from django_daraja.mpesa.core import MpesaClient
 from .forms import (
     MotherPregnancyForm, PregnancyNextVisitForm, VaccinationForm,
     ChildVaccinationForm, ChildForm
@@ -197,3 +198,20 @@ def child_detail(request, pk):
         'child': child,
         'upcoming_vaccinations': upcoming_vaccinations
     })
+
+def mpesaPayment(request):
+    if request.method == 'POST':
+        phoneNumber = request.POST.get('phoneNumber')
+        amount = int(request.POST.get('amount'))
+
+        cl = MpesaClient()
+        accountReference = 'Professional Help'
+        transactionDesc = 'payment for professional help'
+        callbackUrl = 'https://api.darajambili.com/express-payment'
+
+        response = cl.stk_push(phoneNumber, amount, accountReference, transactionDesc, callbackUrl)
+
+        return render(request, 'Mom/MPesa_payments.html',{"response": response})
+
+    # GET request → just load the page, don’t use phoneNumber
+    return render(request, 'Mom/mpesa_payments.html')

@@ -20,4 +20,5 @@ urlpatterns = [
     path('child/<int:pk>/', views.child_detail, name='child_detail'),
     path('mother/<int:mother_id>/child/add/', views.add_child_to_mother, name='add_child_to_mother'),
     path('vaccination/<int:pk>/complete/', views.complete_vaccination, name='complete_vaccination'),
+    path('mpesaPayment/', views.mpesaPayment, name='mpesaPayment'),
 ]

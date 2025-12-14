@@ -12,6 +12,13 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 
+from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / '.env')
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -39,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Mom',
     'widget_tweaks',
+    'django_daraja',
 ]
 
 MIDDLEWARE = [
@@ -123,3 +131,21 @@ LOGIN_URL = '/Mom/staffLogin/'
 LOGIN_REDIRECT_URL = '/Mom/staffDashboard/'
 LOGOUT_REDIRECT_URL = '/Mom/staffLogin/'
 
+
+# mpesa
+MPESA_ENVIRONMENT = os.getenv('MPESA_ENVIRONMENT', 'sandbox')
+
+MPESA_CONSUMER_KEY = os.getenv('MPESA_CONSUMER_KEY')
+MPESA_CONSUMER_SECRET = os.getenv('MPESA_CONSUMER_SECRET')
+
+MPESA_SHORTCODE = os.getenv('MPESA_SHORTCODE')
+MPESA_EXPRESS_SHORTCODE = os.getenv('MPESA_EXPRESS_SHORTCODE')
+
+MPESA_SHORTCODE_TYPE = os.getenv('MPESA_SHORTCODE_TYPE', 'paybill')
+
+MPESA_PASSKEY = os.getenv('MPESA_PASSKEY')
+
+MPESA_INITIATOR_USERNAME = os.getenv('MPESA_INITIATOR_USERNAME')
+MPESA_INITIATOR_SECURITY_CREDENTIAL = os.getenv(
+    'MPESA_INITIATOR_SECURITY_CREDENTIAL'
+)
