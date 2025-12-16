@@ -18,28 +18,20 @@ class Mother(models.Model):
         return f"{self.name} — {self.phone}"
         
     def get_current_status(self):
-        """
-        Determines the mother's current status based on child and pregnancy records.
-        """
-        # 1. Check for existing children
-        if self.children.exists():
-            return "Child Born (Post-Natal Care)"
-
-        # 2. Check current pregnancy status
-        pregnancy = self.pregnancies.order_by('-id').first() 
+        today = timezone.localdate()
         
-        if pregnancy:
-            today = timezone.localdate()
-            
-            # Antenatal Status
-            if pregnancy.due_date and pregnancy.due_date >= today:
+        latest_pregnancy = self.pregnancies.order_by('-id').first() 
+        
+        if latest_pregnancy:
+            if latest_pregnancy.due_date and latest_pregnancy.due_date >= today:
                 return "Pregnant (Antenatal Care)"
             
-            # Due Date Passed Status
-            if pregnancy.due_date and pregnancy.due_date < today:
+            if latest_pregnancy.due_date and latest_pregnancy.due_date < today and not self.children.filter(dob__date=latest_pregnancy.due_date).exists():
                 return "Due Date Passed / Post-Natal Checkup"
 
-        # 3. Default/Fallback Status
+        if self.children.exists():
+            return "Child Born (Active Post-Natal Care)"
+
         return "New Registration / Status Pending"
 class Pregnancy(models.Model):
     mother = models.ForeignKey(Mother, on_delete=models.CASCADE, related_name='pregnancies')
@@ -85,7 +77,7 @@ class ChildVaccination(models.Model):
 
     reminder_day_before_sent = models.BooleanField(default=False)
     reminder_on_day_sent = models.BooleanField(default=False)
-
+    completion_date = models.DateField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
 class ScheduledVaccination(models.Model):
