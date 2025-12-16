@@ -1,31 +1,60 @@
 {% extends "main.html" %}
 {% load widget_tweaks %}
 {% block content %}
+
 <div class="container mt-5 d-flex justify-content-center">
-  <div class="card shadow p-4" style="width: 450px;">
-    <h2 class="text-center mb-4 fw-bold text-primary">Add New Child</h2>
-    <form method="POST">
-      {% csrf_token %}
+    <div class="card shadow p-4 rounded-4" style="width: 480px;">
+        <h2 class="text-center mb-4 fw-bold text-primary"><i class="bi bi-baby me-2"></i>Register New Child</h2>
+        <p class="text-muted text-center">Fill in the details for the new child associated with this mother.</p>
+        <hr>
 
-      <!-- Form fields -->
-      {% for field in form %}
-        <div class="mb-3">
-          <label class="form-label fw-semibold">{{ field.label }}</label>
-          {{ field|add_class:"form-control" }}
-          {% if field.errors %}
-            <div class="text-danger small mt-1">
-              {{ field.errors|striptags }}
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger" role="alert">
+                <p class="fw-bold">Please correct the following form errors:</p>
+                {% for error in form.non_field_errors %}
+                    <p class="mb-0">{{ error }}</p>
+                {% endfor %}
             </div>
-          {% endif %}
-        </div>
-      {% endfor %}
+        {% endif %}
 
-      <!-- Buttons -->
-      <div class="d-flex justify-content-between">
-        <a href="{% url 'child_list' %}" class="btn btn-secondary">Back to List</a>
-        <button type="submit" class="btn btn-primary">Save</button>
-      </div>
-    </form>
-  </div>
+        <form method="POST">
+            {% csrf_token %}
+
+            {% for field in form %}
+                <div class="mb-3">
+                    <label for="{{ field.id_for_label }}" class="form-label fw-semibold">{{ field.label }}</label>
+                    
+                    {% comment %} 
+                        Apply appropriate classes and types based on field name for better rendering
+                    {% endcomment %}
+                    
+                    {% if field.name == 'dob' %}
+                        {# Render DOB field with type=date for native date picker #}
+                        {{ field|add_class:"form-control"|attr:"type:date"|add_error_class:"is-invalid" }}
+                    {% elif field.field.choices %}
+                        {# Render ChoiceFields (like Gender) as select menus with form-select class #}
+                        {{ field|add_class:"form-select"|add_error_class:"is-invalid" }}
+                    {% else %}
+                        {# Render all other fields (Name, etc.) #}
+                        {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+                    {% endif %}
+                    
+                    {% for error in field.errors %}
+                        <div class="invalid-feedback d-block">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+
+            <div class="d-flex justify-content-between mt-4">
+                {# Assuming you have the mother's ID in the context to link back #}
+                <a href="{% url 'motherPage' mother.id %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to Mother Profile
+                </a>
+                <button type="submit" class="btn btn-primary fw-semibold">
+                    <i class="bi bi-save me-1"></i> Save Child
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 {% endblock %}

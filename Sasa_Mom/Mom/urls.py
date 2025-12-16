@@ -7,7 +7,7 @@ from .views import update_next_visit
 urlpatterns = [
     path('', views.landing, name='landing'),
     path('staffLogin/', auth_views.LoginView.as_view(template_name='Mom/staff_login.html'), name='staff_login'),
-    path('register/', views.register_mother, name='register'),
+    path('register/', views.register_mother, name='register_mother'),
     path('mother/<int:pk>/', views.motherPage, name='motherPage'),
     path("staffLogout/", LogoutView.as_view(next_page='staff_login'), name="staff_logout"),
     path('staffDashboard/', views.staff_dashboard, name='staff_dashboard'),
@@ -19,5 +19,8 @@ urlpatterns = [
     path('children/', views.child_list, name='child_list'),
     path('child/<int:pk>/', views.child_detail, name='child_detail'),
     path('mother/<int:mother_id>/child/add/', views.add_child_to_mother, name='add_child_to_mother'),
+    path('mother/<int:mother_id>/pregnancy/add/', views.add_pregnancy, name='add_pregnancy'),
+    path('edit-child/<int:pk>/', views.editChild, name='edit_child'),
     path('vaccination/<int:pk>/complete/', views.complete_vaccination, name='complete_vaccination'),
+    path('edit-mother/<int:pk>/', views.editMother, name='edit_mother'),
 ]
