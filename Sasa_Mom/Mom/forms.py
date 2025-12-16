@@ -69,27 +69,34 @@ class MotherPregnancyForm(forms.Form):
 
     def save(self):
         """
-        Save both models in correct order:
-        1. Save Mother
-        2. Save Pregnancy linked to Mother
+        Save both models and attach the conditional flag to the returned Mother object.
         """
-        # Save Mother
+        # Get the flag state
+        already_given_birth_flag = self.cleaned_data.get('already_given_birth', False)
+
+        # 1. Save Mother
         mother = Mother.objects.create(
             name=self.cleaned_data['name'],
             phone=self.cleaned_data['phone'],
             language=self.cleaned_data['language'],
             hospital=self.cleaned_data['hospital'],
             consent=self.cleaned_data.get('consent', False),
+           
         )
+        
+    
+        mother.already_given_birth = already_given_birth_flag
 
-        # Save Pregnancy
+
+        # 2. Save Pregnancy
         Pregnancy.objects.create(
             mother=mother,
-            due_date=None if self.cleaned_data.get('already_given_birth') else self.cleaned_data.get('due_date'),
+            # Set due_date to None if 'already_given_birth' is ticked
+            due_date=None if already_given_birth_flag else self.cleaned_data.get('due_date'),
             next_visit=self.cleaned_data.get('next_visit')
         )
 
-        return mother
+        return mother # Returns the mother object with the attached flag
 
     
 

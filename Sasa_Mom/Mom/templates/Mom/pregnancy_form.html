@@ -1,0 +1,79 @@
+{% extends "main.html" %}
+{% block content %}
+
+<div class="container mt-4 d-flex justify-content-center">
+    <div class="card shadow-lg p-5" style="width: 750px; border-radius: 18px;">
+        
+        <div class="mb-4 border-bottom pb-3">
+            <h2 class="fw-bold text-primary" style="font-size: 2rem;">
+                <i class="bi bi-person-lines-fill me-2"></i> {{ action_verb|default:"Edit" }} Pregnancy Details
+            </h2>
+            
+            <p class="text-muted mb-0">
+                Mother: <span class="fw-semibold text-dark">{{ mother.name }}</span> ({{ mother.phone }})
+            </p>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            {# Display non-field errors #}
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger" role="alert">
+                    {% for error in form.non_field_errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <div class="row mb-3">
+                {# Due Date #}
+                <div class="col-md-6 mb-3">
+                    <label for="{{ form.due_date.id_for_label }}" class="form-label fw-semibold">Estimated Due Date</label>
+                    {{ form.due_date }}
+                    {% if form.due_date.errors %}
+                        <div class="text-danger small mt-1">{{ form.due_date.errors }}</div>
+                    {% endif %}
+                </div>
+
+                {# Next Visit #}
+                <div class="col-md-6 mb-3">
+                    <label for="{{ form.next_visit.id_for_label }}" class="form-label fw-semibold">Next Scheduled Visit</label>
+                    {{ form.next_visit }}
+                    {% if form.next_visit.errors %}
+                        <div class="text-danger small mt-1">{{ form.next_visit.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {# Notes/Textarea Field #}
+            {% if form.notes %}
+            <div class="row mb-4">
+                <div class="col-12">
+                    <label for="{{ form.notes.id_for_label }}" class="form-label fw-semibold">Notes / Remarks</label>
+                    {{ form.notes }}
+                    {% if form.notes.errors %}
+                        <div class="text-danger small mt-1">{{ form.notes.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+            
+            <div class="d-flex justify-content-between pt-3 border-top">
+                <a 
+                    href="{% url 'motherPage' mother.id %}" 
+                    class="btn btn-secondary py-2"
+                >
+                    <i class="bi bi-arrow-left me-2"></i> Cancel / Back
+                </a>
+                
+                <button type="submit" class="btn btn-primary py-2 fw-semibold">
+                    <i class="bi bi-save me-1"></i> Save Pregnancy Details
+                </button>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

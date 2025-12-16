@@ -2,128 +2,172 @@
 {% block content %}
 
 <div class="container mt-4">
-  <div class="card shadow-lg border-0 p-4 rounded-4">
+    <div class="card shadow-lg border-0 p-4 rounded-4">
 
-    <h3 class="mb-3 text-primary">Mother Profile & Healthcare Reminders</h3>
-    <p class="text-muted mb-3">Detailed overview of mother, pregnancy, children & reminders.</p>
-    <hr>
+        <h3 class="mb-3 text-primary"><i class="bi bi-person-heart me-2"></i>Mother Profile & Healthcare Reminders</h3>
+        <p class="text-muted mb-3">Detailed overview of mother, pregnancy, children, and scheduled reminders.</p>
+        
+        <div class="d-flex justify-content-end mb-4">
+            
+            {# RESTRICTED ACTION: Only superusers can edit mother details #}
+            {% if request.user.is_superuser %}
+            <a href="{% url 'edit_mother' mother.id %}" class="btn btn-warning btn-sm me-2">
+                <i class="bi bi-pencil-square"></i> Edit Mother Details
+            </a>
+            {% endif %}
 
-    <!-- Mother Info -->
-    <h4 class="text-secondary mt-3">Mother Details</h4>
-    <div class="row mt-3">
-      <div class="col-md-6 mb-3">
-        <small class="text-muted">Name</small>
-        <p class="fw-bold">{{ mother.name }}</p>
-      </div>
-      <div class="col-md-6 mb-3">
-        <small class="text-muted">Phone</small>
-        <p class="fw-bold">{{ mother.phone }}</p>
-      </div>
-      <div class="col-md-6 mb-3">
-        <small class="text-muted">Language</small>
-        <p class="fw-bold">{{ mother.language }}</p>
-      </div>
-      <div class="col-md-6 mb-3">
-        <small class="text-muted">Hospital</small>
-        <p class="fw-bold">{{ mother.hospital }}</p>
-      </div>
-      <div class="col-md-6 mb-3">
-        <small class="text-muted">Consent Given</small>
-        <p class="fw-bold">
-          {% if mother.consent %}
-            <span class="badge bg-success">YES</span>
-          {% else %}
-            <span class="badge bg-danger">NO</span>
-          {% endif %}
-        </p>
-      </div>
-      <div class="col-md-6 mb-3">
-        <small class="text-muted">Registered On</small>
-        <p class="fw-bold">{{ mother.created_at|date:"M d, Y H:i" }}</p>
-      </div>
-    </div>
-
-    <hr>
-
-    <!-- Pregnancy Section -->
-    <h4 class="text-secondary mt-4">Pregnancy Details</h4>
-    {% if mother.pregnancies.all %}
-      {% for p in mother.pregnancies.all %}
-        <div class="alert alert-secondary mt-3 rounded-3 shadow-sm">
-          {% if p.due_date %}
-            <strong>Due Date:</strong> {{ p.due_date|date:"M d, Y" }} <br>
-          {% else %}
-            <strong>Status:</strong> <span class="text-success">Already Given Birth</span><br>
-          {% endif %}
-          <strong>Next Visit:</strong>
-          {% if p.next_visit %}
-            {{ p.next_visit|date:"M d, Y" }}
-          {% else %}
-            <span class="text-muted">Not set</span>
-          {% endif %}
-          <br>
-          <small class="text-muted">Record created: {{ p.created_at|date:"M d, Y H:i" }}</small>
-          <div class="mt-2">
-            <a href="{% url 'update_next_visit' p.id %}" class="btn btn-sm btn-primary">Update Next Visit</a>
-          </div>
+            {# This is likely an action for all staff, so it remains visible #}
+            <a href="{% url 'add_child_to_mother' mother.id %}" class="btn btn-success btn-sm">
+                <i class="bi bi-plus-circle"></i> Add Child
+            </a>
         </div>
-      {% endfor %}
-    {% else %}
-      <p class="text-muted mt-3">No pregnancy information available.</p>
-    {% endif %}
+        
+        <hr>
 
-    <hr>
-
-    <!-- Children Section -->
-    <h4 class="text-secondary mt-4">Children</h4>
-    <a href="{% url 'add_child_to_mother' mother.id %}" class="btn btn-success btn-sm mb-3">+ Add Child</a>
-    {% if mother.children.all %}
-      <div class="row">
-        {% for child in mother.children.all %}
-          <div class="col-md-6 mb-3">
-            <div class="card shadow-sm border-0 rounded-3 p-3">
-              <h5 class="fw-bold text-primary">{{ child.name }}</h5>
-              <p class="mb-1">
-                <strong>Gender:</strong> {{ child.gender }}<br>
-                <strong>DOB:</strong> {{ child.dob }}
-              </p>
-              <a href="{% url 'child_detail' child.id %}" class="btn btn-outline-info btn-sm mt-2">View Child</a>
+        <h4 class="text-secondary mt-3"><i class="bi bi-info-circle me-2"></i>Mother Details</h4>
+        <div class="row mt-3">
+            <div class="col-md-6 mb-3">
+                <small class="text-muted d-block">Name</small>
+                <p class="fw-bold fs-5">{{ mother.name }}</p>
             </div>
-          </div>
-        {% endfor %}
-      </div>
-    {% else %}
-      <p class="text-muted mt-2">No children added yet.</p>
-    {% endif %}
-
-    <hr>
-
-    <!-- Vaccination Section -->
-    <h4 class="text-secondary mt-4">Upcoming Vaccinations</h4>
-    {% if upcoming_vaccinations %}
-      {% for vac in upcoming_vaccinations %}
-        <div class="alert alert-info mt-3 rounded-3 shadow-sm d-flex justify-content-between align-items-center">
-          <div>
-            <strong>{{ vac.vaccine_name }}</strong><br>
-            <span>Scheduled on: {{ vac.scheduled_date|date:"M d, Y" }}</span>
-          </div>
-          <form action="{% url 'complete_vaccination' vac.id %}" method="POST" class="mb-0">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-success btn-sm">✔ Mark as Done</button>
-          </form>
+            <div class="col-md-6 mb-3">
+                <small class="text-muted d-block">Phone</small>
+                <p class="fw-bold">{{ mother.phone }}</p>
+            </div>
+            <div class="col-md-6 mb-3">
+                <small class="text-muted d-block">Language</small>
+                <p class="fw-bold">{{ mother.language }}</p>
+            </div>
+            <div class="col-md-6 mb-3">
+                <small class="text-muted d-block">Hospital</small>
+                <p class="fw-bold">{{ mother.hospital }}</p>
+            </div>
+            <div class="col-md-6 mb-3">
+                <small class="text-muted d-block">Consent Given</small>
+                <p class="fw-bold">
+                    {% if mother.consent %}
+                        <span class="badge bg-success"><i class="bi bi-check-circle-fill"></i> YES</span>
+                    {% else %}
+                        <span class="badge bg-danger"><i class="bi bi-x-circle-fill"></i> NO</span>
+                    {% endif %}
+                </p>
+            </div>
+            <div class="col-md-6 mb-3">
+                <small class="text-muted d-block">Registered On</small>
+                <p class="fw-bold text-sm">{{ mother.created_at|date:"M d, Y" }} at {{ mother.created_at|date:"H:i" }}</p>
+            </div>
+            {# DYNAMIC STATUS DISPLAY #}
+            <div class="col-md-6 mb-3">
+                <small class="text-muted d-block">Current Status</small>
+                <p class="fw-bold fs-5 text-success">{{ mother.get_current_status }}</p> 
+            </div>
         </div>
-      {% endfor %}
-    {% else %}
-      <p class="text-muted mt-3">No upcoming vaccinations.</p>
-    {% endif %}
 
-    <!-- Buttons -->
-    <div class="mt-4 d-flex gap-2">
-      <a href="{% url 'register' %}" class="btn btn-primary">Register Another Mother</a>
-      <a href="{% url 'staff_dashboard' %}" class="btn btn-secondary">View All</a>
+        <hr>
+
+        <h4 class="text-secondary mt-4"><i class="bi bi-clipboard-check me-2"></i>Pregnancy Details</h4>
+        
+        {# --- START OF CONDITIONAL LOGIC FOR PREGNANCY --- #}
+        {# CHANGE: Use 'pregnancies' (filtered queryset from view) instead of mother.pregnancies.all #}
+        {% if pregnancies %}
+            {# LOOP THROUGH AND DISPLAY EXISTING PREGNANCIES #}
+            {% for p in pregnancies %}
+                <div class="alert alert-light border shadow-sm mt-3 rounded-3 p-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            {% if p.due_date %}
+                                <strong><i class="bi bi-calendar-event"></i> Estimated Due Date:</strong> <span class="text-primary">{{ p.due_date|date:"F d, Y" }}</span>
+                            {% else %}
+                                <strong><i class="bi bi-star-fill text-muted"></i> Due Date:</strong> <span class="text-muted">Not specified (Post-Natal)</span>
+                            {% endif %}
+                            <br>
+                            <strong><i class="bi bi-hospital"></i> Next Visit:</strong>
+                            {% if p.next_visit %}
+                                <span class="text-danger fw-bold">{{ p.next_visit|date:"F d, Y" }}</span>
+                            {% else %}
+                                <span class="text-muted">Not scheduled/Set visit required</span>
+                            {% endif %}
+                        </div>
+                        <a href="{% url 'update_next_visit' p.id %}" class="btn btn-sm btn-outline-primary flex-shrink-0">
+                            <i class="bi bi-calendar-plus"></i> Update Visit
+                        </a>
+                    </div>
+                    <small class="text-muted mt-2 d-block">Record created: {{ p.created_at|date:"M d, Y" }}</small>
+                </div>
+            {% endfor %}
+        {% else %}
+            {# DISPLAY PENDING STATUS WITH "ADD DUE DATE" OPTION #}
+            <div class="alert alert-warning mt-3 border d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i> No active pregnancy due date recorded.
+                    <span class="d-block small text-muted mt-1">Status may be pending until a due date is recorded.</span>
+                </div>
+                
+                <a href="{% url 'add_pregnancy' mother.id %}" class="btn btn-sm btn-warning fw-semibold">
+                    <i class="bi bi-calendar-plus"></i> Add Due Date
+                </a>
+            </div>
+        {% endif %}
+        {# --- END OF CONDITIONAL LOGIC FOR PREGNANCY --- #}
+
+        <hr>
+
+        <h4 class="text-secondary mt-4"><i class="bi bi-person-bounding-box me-2"></i>Children</h4>
+        
+        {% if mother.children.all %}
+            <div class="row mt-3">
+                {% for child in mother.children.all %}
+                    <div class="col-md-6 mb-3">
+                        <div class="card shadow-sm border-info rounded-3 p-3">
+                            <h5 class="fw-bold text-info mb-1"><i class="bi bi-baby me-2"></i>{{ child.name }}</h5>
+                            <p class="mb-1">
+                                <strong>Gender:</strong> <span class="text-capitalize">{{ child.gender }}</span><br>
+                                <strong>DOB:</strong> {{ child.dob|date:"F d, Y" }}
+                            </p>
+                            <a href="{% url 'child_detail' child.id %}" class="btn btn-outline-info btn-sm mt-2">View Profile & History</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-light mt-3 border">
+                <i class="bi bi-people-fill me-2"></i> No children added yet. Use the **+ Add Child** button above.
+            </div>
+        {% endif %}
+
+        <hr>
+
+        <h4 class="text-secondary mt-4"><i class="bi bi-calendar-x me-2"></i>Upcoming Vaccinations (for all children)</h4>
+        {# NOTE: The view must pass 'upcoming_vaccinations' containing aggregated data for all children #}
+        {% if upcoming_vaccinations %}
+            {% for vac in upcoming_vaccinations %}
+                <div class="alert alert-info mt-3 rounded-3 shadow-sm d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong class="text-primary">{{ vac.vaccination.name }}</strong><br> 
+                        <span class="text-muted small d-block">Child: {{ vac.child.name }}</span>
+                        <span class="fw-bold">Scheduled on: {{ vac.scheduled_date|date:"F d, Y" }}</span>
+                    </div>
+                    {# Allowing all staff to mark as complete #}
+                    <form action="{% url 'complete_vaccination' vac.id %}" method="POST" class="mb-0">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success btn-sm">
+                            <i class="bi bi-check-lg"></i> Mark as Done
+                        </button>
+                    </form>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-success mt-3">
+                <i class="bi bi-check-circle-fill me-2"></i> All scheduled vaccinations are complete or none are pending.
+            </div>
+        {% endif %}
+
+        <div class="mt-4 pt-3 border-top d-flex gap-2 justify-content-end">
+            <a href="{% url 'register_mother' %}" class="btn btn-outline-primary">Register Another Mother</a>
+            <a href="{% url 'staff_dashboard' %}" class="btn btn-secondary">View All Moms</a>
+        </div>
+
     </div>
-
-  </div>
 </div>
 
 {% endblock %}
