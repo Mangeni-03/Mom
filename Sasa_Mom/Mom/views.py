@@ -309,19 +309,27 @@ def add_pregnancy(request, mother_id):
     mother = get_object_or_404(Mother, id=mother_id)
 
     if request.method == 'POST':
-        # NOTE: Using a ModelForm will simplify this:
         form = PregnancyForm(request.POST) 
         if form.is_valid():
+            given_birth = form.cleaned_data.pop('given_birth') # Remove non-model field before saving
+            
+            # Save the Pregnancy record (due_date might be null if 'given_birth' was checked)
             pregnancy = form.save(commit=False)
             pregnancy.mother = mother
             pregnancy.save()
-            return redirect('motherPage', pk=mother.id)
+
+            if given_birth:
+                # Redirect immediately to the Add Child form
+                return redirect('add_child_to_mother', mother_id=mother.id)
+            else:
+                # Redirect back to the Mother's profile page
+                return redirect('motherPage', pk=mother.id)
     else:
-        # Pass initial data if required (e.g., for subsequent pregnancies)
         form = PregnancyForm() 
 
     return render(request, 'Mom/pregnancy_form.html', {
         'form': form, 
         'mother': mother,
-        'action_verb': 'Add' # For template title consistency
+        'action_verb': 'Add',
+        'is_add_form': True # Optional: for styling/logic in the template
     })

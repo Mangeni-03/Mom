@@ -14,15 +14,38 @@ class MotherForm(forms.ModelForm):
             'consent': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
-
 class PregnancyForm(forms.ModelForm):
+    # Added a non-model field for staff to indicate immediate child registration
+    given_birth = forms.BooleanField(
+        required=False,
+        label="The mother has already given birth (Skip Due Date and go to Add Child)",
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
+    
     class Meta:
         model = Pregnancy
-        fields = ['due_date', 'next_visit']
+        # Ensure due_date is NOT required if the mother has already given birth
+        fields = ['due_date', 'next_visit', 'notes', 'given_birth'] 
         widgets = {
             'due_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'next_visit': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
+
+    # Custom clean method to handle making due_date optional if 'given_birth' is checked
+    def clean(self):
+        cleaned_data = super().clean()
+        given_birth = cleaned_data.get('given_birth')
+        due_date = cleaned_data.get('due_date')
+        
+        # If the mother has NOT given birth, the due date must be provided
+        if not given_birth and not due_date:
+            self.add_error('due_date', "Please provide an estimated due date or check the 'already given birth' box.")
+        
+        # We allow a Pregnancy record to be saved with a null due_date if given_birth is checked,
+        # as this record acts as a placeholder for a completed pregnancy.
+        
+        return cleaned_data
 
 
 class MotherPregnancyForm(forms.Form):
