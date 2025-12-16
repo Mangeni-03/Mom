@@ -45,6 +45,7 @@ class Pregnancy(models.Model):
     mother = models.ForeignKey(Mother, on_delete=models.CASCADE, related_name='pregnancies')
     due_date = models.DateField(null=True, blank=True)
     next_visit = models.DateField(null=True, blank=True)
+    notes = models.TextField(max_length=500, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

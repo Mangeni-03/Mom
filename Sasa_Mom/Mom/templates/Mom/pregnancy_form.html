@@ -46,6 +46,26 @@
                 </div>
             </div>
 
+            {# NEW CHECKBOX FOR ALREADY GIVEN BIRTH #}
+            {% if form.given_birth %}
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="form-check p-4 border rounded-3 bg-light">
+                        {{ form.given_birth }}
+                        <label class="form-check-label fw-bold" for="{{ form.given_birth.id_for_label }}">
+                            {{ form.given_birth.label }}
+                        </label>
+                        <p class="small text-muted mb-0 mt-1">
+                            Check this box if the mother is registering *after* giving birth. This will save the record and take you directly to the **Add Child** form.
+                        </p>
+                        {% if form.given_birth.errors %}
+                            <div class="text-danger small mt-1">{{ form.given_birth.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
             {# Notes/Textarea Field #}
             {% if form.notes %}
             <div class="row mb-4">
